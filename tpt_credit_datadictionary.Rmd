@@ -1,0 +1,62 @@
+---
+title: "TPT Credit Data Dictionary"
+author: "Naas van Heerden"
+date: "3/10/2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+# Data Dictionary 
+
+This encompasses standard data as well as object naming. 
+
+Name                       |  Description
+-------------------------- |  -----------------------------------------------------------------------------------------------------------------------
+**Date variables:**        |  
+*Note:*                    |  *In principal there are 3 date dimension: birth date (orig), today's date (pointintime) and age (period)* 
+orig_date                  |  `<date> ymd` The date upon which the contract was originated. 
+orig_month                 |  `<date> ymd` if all dates are defaulted to last or first data of month to make grouping easy. Used to group loans into vintages.
+pointintime_date           |  `<date> ymd` The current / point in time date
+pointintime_month          |  `<date> ymd` Monthend version
+loan_period                |  Age of the loan 
+fpd_month                  |  Month of the first payment due. (Also used to group vintages)
+fpd_period                 |  Months since first payment due (Also an age variable) 
+writeoff_date              |  `<date> ymd` The date on which the contract was written off.
+writeoff_month             |  `<date> ymd` monthend version
+default_date               |  `<date> ymd` The date on which the contract defaulted. Used to group LGD / Recovery rate vintages.  
+default_month              |  `<date> ymd` monthend version. Used to group loans into vintages for recovery rate (or LGD) analysis. 
+months_in_default          |  number of months in default state. 
+**Segmenter variables:**   |  
+*Note:*                    |  *There are infinetly many segmenter variables. Each client has its own they will be added here as encountered.*
+product_name               |  `<chr>` The client name for the product type. this could be a sub-type of a credit_type (as in NCA). 
+credit_type                |  `<chr>` the type of credit agreement. Can be one of the following: "mortgage", "facility", "unsecured", "developmental", "short", "other", "incidental"
+contract_key               |  `<int>` the unique identifier of a contract. The most granular segmentation variable. 
+Term                       |  `<int>` The repayment period of an amortising loan. 
+**Performance and other indicators indicators:**|
+months_arrears             |  `<int>` number of months that loan is in arrears 
+default_flag               |  `<int>` flag indicating a default / delinquent /  NPL status. Usually binary. Can not go back to previous state. I.e. once flag is triggered that is a absorbing end state.
+closed_flag                |  flag indicating that the contract has been closed in a specific month. 
+disclosure                 |  `<chr>` accounting discloure status. typically PL (performing) or NPL (non-performing)
+default_definition         |  `<int>` the number of months a contract has to be in arrears to be classified as default. Serves as input to many functions that deal with default. 
+**Weighting variables**    |
+*Note:*                    |  *Weighting of any calculation can typically be done by various variables. E.g. PD by count, balance etc.*
+count                      |  Just count the contracts (unique contract_no) 
+closing_balance            |  The balance of the loan at a point in time (ClosingBalance)
+loan_amount                |  The amount loaned to the client orignally (LoanAmount)
+exposure_at_default        |  Also known as EAD. used in the formual EL = "PDxLGDxEAD. The loan balance at default.
+provision                  |  The provision balance held against the loan at month end. 
+net_advance                |  The book value of the loan (net of provisions and unreleased income)
+**Cash flow and amort**    |  
+instalment                 |  The instalment expected on a loan in a specific month. 
+payment                    |  Payments (or receipts) received in a particular month. Usually a negative number. 
+disbursement               |  further advance on the loan. Used when loan is disbursed in stages (like a building loan)
+interest_rate              |  the annual interest rate charged on the loan.   
+opening_balance            |  balance at the start of a month or period. 
+

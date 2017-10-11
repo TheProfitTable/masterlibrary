@@ -1,0 +1,126 @@
+---
+title: "How to write functions using dplyr"
+author: "Naas van Heerden"
+date: "10/11/2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#### The Why
+
+Writing functions with dplyr makes a lot of sense because you can automate the living daylight out of most data wrangling tasks! You also get to use a familiar syntax within your function body (if you are a regular dplyr user). 
+
+#### Here is an example:
+
+Let's load the necessary packages: 
+
+```{r message=FALSE}
+library(dplyr)
+library(rlang)
+```
+
+First we create a data set.
+
+```{r}
+x <- data.frame(a=c(1:10), b=c(10:1), c=c(1:10))
+x
+```
+
+The  **objective** of the task we want to perform with this dataset is as follows: Imagine `a` is some kind of index or time variable. We would like to sum all the other variables in the data set (we don't necessarily know how many there are) to a total and then calculate the percentage of each variable makes up at each point of `a` of that total. 
+
+So it makes sense for us assign the number of columns to a variable, as we want to automate the task. 
+
+```{r}
+ncol <- ncol(x)
+ncol
+```
+
+Now we add the total variable to the data frame using the ncol object (automation in mind)
+
+```{r}
+x$total <- apply(x[,c(2:ncol)], 1, sum)
+x
+```
+
+To add the variables that represent the percentages of the total is quite easy: 
+```{r}
+mutate(x, perc_b = b / total) %>%
+  mutate(perc_c = c / total)
+```
+
+But what if we want to write a function or script to do this and we don't know how many variables there are in the data frame that is given to fed into the function or script? 
+
+What we want to do is essentially: 
+
+for all the variables in the data set except `a` and `total` do this: 
+`mutate(perc_variablename = variablename / total)`
+
+So let's try it for one variable only first: 
+
+```{r error=TRUE}
+variablename <- "b"
+mutate(paste0("perc_", variablename) = variablename / total)
+```
+
+This gives us an error message. I'm not going to explain the theory behind it. You can read more about it [here](https://cran.r-project.org/web/packages/dplyr/vignettes/programming.html). 
+
+This is how you fix it. Note that the LHS of the mutate expression needs to evaluate to a string. 
+
+```{r}
+variablename <- "b"
+# total is a variable in the data frame, x, so it needs to be quoted.
+total <- quo(total)
+
+# the new variable name (LHS) should evaluate to a string:
+new_name <- paste0("perc_", variablename)
+
+# when using the variable name on the RHS it should evaulate to a variable name
+# :)
+new_variablename <- as.name(variablename)
+
+mutate(x, !!new_name := UQ(new_variablename) / UQ(total))
+```
+
+Now to automatically do this action for how many variables there are, we do the following
+
+```{r}
+for (i in 2:ncol) {
+
+name <- as.name(names(x[i]))
+nname <- paste0("perc_", names(x[i]))
+
+total <- quo(total)
+
+x <- mutate(x, !!nname := UQ(name) / UQ(total))
+}
+
+x
+```
+
+So we could easily put the above into a function.  
+
+```{r}
+add_perc <- function(data) {
+  ncol <- ncol(data) - 1
+  for (i in 2:ncol) {
+
+    name <- as.name(names(data[i]))
+    nname <- paste0("perc_", names(data[i]))
+
+    total <- quo(total)
+
+    data <- mutate(data, !!nname := UQ(name) / UQ(total))
+  }
+  return(data)
+}
+
+# recreate x 
+x <- data.frame(a=c(1:10), b=c(10:1), c=c(1:10))
+x$total <- apply(x[,c(2:ncol)], 1, sum)
+
+add_perc(x)
+```
+

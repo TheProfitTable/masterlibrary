@@ -1,0 +1,17 @@
+# Glossary 
+
+#### Background and purpose 
+
+This document descbribes some of the often used terms related to credit / loan analysis projects. It is possible for these terms to have different meanings in different settings and you are bound to encouter some ambiguity in further reading or on the web. 
+
+The purpose here is to explain their meaning within all of [The Profit Table's projects](https://github.com/TheProfitTable). 
+
+The terms are unordered at this stage and are added as needed. Please log an issue on github in [this repo](https://github.com/TheProfitTable/masterlibrary) if you want to have a specific term explained or if any of the explainations below are unclear. 
+
+Note that any name of a variable or objects that refers to our standard data dictionary will be put in `code blocks`. 
+
+#### Definitions
+
+**Loan level:** Where each observation represents one contract. This is usually used to describe a data set. I.e. a loan level data set, meaning that each obervation in the data set contains information about one loan, such as the loan's `contract_key`, `loan_amount`, `term`, credit score or rating, `orig_month` etc. 
+
+**Monthly performance level:** Where each observation prepresents the one month of one loan contract. I.e. every combination of `contract_key` and `pointintime_month` is unique. 

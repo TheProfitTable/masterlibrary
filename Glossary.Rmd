@@ -12,6 +12,6 @@ Note that any name of a variable or objects that refers to our standard data dic
 
 #### Definitions
 
-**Loan level:** Where each observation represents one contract. This is usually used to describe a data set. I.e. a loan level data set, meaning that each obervation in the data set contains information about one loan, such as the loan's `contract_key`, `loan_amount`, `term`, credit score or rating, `orig_month` etc. 
+**Contract level:** Where each observation represents one contract. This is usually used to describe a data set. I.e. a loan level data set, meaning that each obervation in the data set contains information about one loan, such as the loan's `contract_key`, `loan_amount`, `term`, credit score or rating, `orig_month` etc. 
 
 **Monthly performance level:** Where each observation prepresents the one month of one loan contract. I.e. every combination of `contract_key` and `pointintime_month` is unique. 
